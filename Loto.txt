@@ -1,0 +1,288 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+void ANAMENU()
+{
+    printf("---ANA MENU---\n");
+    printf("1. Super Loto (6/54) Oynama\n");
+    printf("2. Istatistikleri Belirleme\n");
+    printf("3. Cikis\n");
+}
+
+void sirala(int *a,int*b)
+{
+    int gecici=*a;
+    *a=*b;
+    *b=gecici;
+}
+
+int rastgeleSayi(){
+	//Burada rand() fonksiyonun urettigi sayinin 54 ile modunu alÃ½p 1 ekliyoruz 1 ile 54 arasÄ± rastgele sayi Ã¼retiyor.
+	int i,x,SayiSecim[54];
+	for(i=0;i<6;i++){
+		x = 1+rand()%54;
+		while(SayiSecim[x-1]==1){
+		    x = 1+rand()%54;
+		}
+		SayiSecim[x-1] = 1;
+	}
+	return x;
+}
+
+int main()
+{
+    int tahminler[6];
+    int loto_sayilari[6];
+    int liste1[55]={0};
+    int liste2[55]={0};
+    int liste3[55]={0};
+    int liste4[55]={0};
+    int liste3_1[55];
+    int i,dt1=0,dt2=0,dt3=0,dt4=0;
+
+    for(i=0;i<54;i++){
+    	liste3_1[i]=i+1;
+	}
+    int sonuc, sayi;
+    int dogru_tahmin=0, toplam_sonuc=0;
+    int tercih,j,k;
+    char cikis;
+
+    //Her seferinde farklÄ± bir sayÄ± Ã¼retmek iÃ§in kullanÄ±cÄ±dan seed giriÅŸi alÄ±yoruz.
+    int seed;
+    printf("Seed degeri giriniz = ");
+    scanf("%d",&seed);
+    srand(seed);
+
+    while(1)
+    {
+        ANAMENU();
+        printf("\n(Toplam odulunuz:%d puan) Seciminizi giriniz:\n",toplam_sonuc);
+        scanf("%d",&tercih);
+        if(tercih == 1)
+        {
+            int n=0;
+            i=0;
+            do{
+				printf("%d.Sayinizi girin\n",i+1);
+               	scanf("%d",&sayi);
+               	int x1=sayi;
+               	if(sayi<1||sayi>54){
+               		printf("Girdiginiz Deger Hatali, Lutfen Tekrar Girin (1-54 arasi)\n");
+					n=0;
+               		i=0;
+					continue;
+				}
+               	int l;
+              	tahminler[i]=sayi;
+              	for(l=0;l<n;l++){
+              		if(tahminler[l]==tahminler[n]){
+						printf("Ayni Degeri Girdiniz, Lutfen Farkli Bir Deger Girin\n");
+						i--;
+						n--;
+						break;
+				  	}
+				}
+               	n++;
+               	i++;
+            }while(n<6);
+        	for(i=0;i<6;i++){
+        		int x1=tahminler[i];
+        		liste1[x1]++;
+        		liste4[x1-1]++;
+			}
+            for(i=0;i<5;i++)
+            {
+            	for(j=0;j<5;j++)
+            	{
+                	if(tahminler[j]>tahminler[j+1])
+                	{
+                   		sirala(&tahminler[j],&tahminler[j+1]);
+                	}
+            	}
+            }
+            printf("Tahminleriniz = ");
+            for(k=0;k<6;k++)
+            {
+            	printf("%d ",tahminler[k]);
+            }
+            printf("\n");
+            for(i=0;i<6;i++)
+            {
+                loto_sayilari[i]=rastgeleSayi();
+            }
+            for(i=0;i<6;i++){
+        		int x2=loto_sayilari[i];
+        		liste2[x2]++;
+			}
+            for(i=0;i<5;i++)
+            {
+            	for(j=0;j<5;j++)
+            	{
+                	if(loto_sayilari[j]>loto_sayilari[j+1])
+                	{
+                		sirala(&loto_sayilari[j],&loto_sayilari[j+1]);
+                	}
+            	}
+            }
+            printf("Loto Sayilari = ");
+            for(i=0;i<6;i++)
+            {
+            	printf("%d ",loto_sayilari[i]);
+            }
+            printf("\n");
+            for(i=0;i<6;i++)
+            {
+                for(j=0;j<6;j++)
+                {
+                    if(tahminler[i]==loto_sayilari[j])
+                    {
+                    	int x3=tahminler[i];
+                    	liste3[x3-1]++;
+                        dogru_tahmin++;
+                    }
+                }
+            }
+            // Burda puanlama sistemini yapÄ±yoruz.
+            printf("Dogru tahmin sayiniz = %d\n\n",dogru_tahmin);
+            switch(dogru_tahmin)
+            {
+            	case 3:
+            		sonuc = 1;
+					dt1++;
+					break;
+            	case 4:
+            		sonuc = 3;
+					dt2++;
+					break;
+            	case 5:
+            		sonuc = 10;
+					dt3++;
+					break;
+            	case 6:
+            		sonuc = 50;
+					dt4++;
+					break;
+            	default:
+            		sonuc = 0;
+					break;
+            }
+            dogru_tahmin = 0;
+            for(i=0;i<6;i++)
+            {
+                tahminler[i]=0;
+            }
+            toplam_sonuc = toplam_sonuc + sonuc;
+
+    	}
+    	else if(tercih == 2){
+    		int secim;
+    		printf("Istatistik Ekrani\nTercihinizi Girin:\n1. Cekiliste Cikan Sayilar Kac Kere Cikti?\n2. Cekiliste Tutan Sayilar Kac Kere Cikti?\n");
+    		printf("3. Cekiliste Hangi Oduller Kac Kere Kazanildi?\n4. En Cok Tahmin Ettiginiz Sayilar\n5. Ana Menu");
+    		scanf("%d",&secim);
+    		printf("\n\n");
+    		switch(secim){
+    			case 1:
+    				printf("Cekiliste Cikan Sayilar Kac Kere Cikti?\n");
+    				printf("Sayi\t  Kac Kere\t  Grafik\n\n");
+    				for(i=0;i<55;i++){
+
+						if(liste2[i]!=0){
+							printf("%-4d\t   %-4d\t\t ",i,liste2[i]);
+							for(j=0;j<liste2[i];j++){
+								printf("*");
+							}
+							printf("\n");
+						}
+						else continue;
+					}
+					break;
+    			case 2:
+
+    				for(i=0;i<55;i++)
+            		{
+            			for(j=0;j<55;j++)
+           				{
+               				if(liste3[j]<liste3[j+1])
+            				{
+            					sirala(&liste3_1[j],&liste3_1[j+1]);
+            					sirala(&liste3[j],&liste3[j+1]);
+            				}
+            			}
+            		}
+    				printf("Cekiliste Tutan Sayilar Kac Kere Cikti?\n");
+    				printf("Sayi\t  Kac Kere\t  Grafik\n\n");
+					for(i=0;i<55;i++){
+
+						if(liste3[i]!=0){
+
+							printf("%-4d\t   %-4d\t\t ",liste3_1[i],liste3[i]);
+							for(j=0;j<liste3[i];j++){
+								printf("*");
+							}
+							printf("\n");
+						}
+						else continue;
+					}
+					break;
+    			case 3:
+    				printf("Cekiliste Hangi Oduller Kac Kere Kazanildi?\n");
+    				printf("Dogru Tahmin Sayisi\t  Kac Kere\t  Toplam Kazanilan Puan\n\n");
+    				printf("3\t\t\t\t%d\t\t%d\n",dt1,dt1*1);
+    				printf("4\t\t\t\t%d\t\t%d\n",dt2,dt2*3);
+    				printf("5\t\t\t\t%d\t\t%d\n",dt3,dt3*10);
+    				printf("6\t\t\t\t%d\t\t%d\n",dt4,dt4*50);
+					break;
+    			case 4:
+    				printf("En Cok Tahmin Ettiginiz Sayilar\n");
+    				printf("Sayi\t  Kac Kere Oynandi\n\n");
+    				for(i=0;i<54;i++)
+            		{
+            			for(j=0;j<54;j++)
+           				{
+               				if(liste4[j]<liste4[j+1])
+            				{
+            					sirala(&liste3_1[j],&liste3_1[j+1]);
+            					sirala(&liste4[j],&liste4[j+1]);
+            				}
+            			}
+            		}
+					for(i=0;i<3;i++){
+						if(liste4[i]!=0){
+							printf("%-4d\t   %-4d\t\t\n",liste3_1[i],liste4[i]);
+						}
+						else continue;
+                    }
+					break;
+    			case 5:
+    				continue;
+    			default:
+					break;
+			}
+		}
+    	else if(tercih == 3)
+    	{
+        	printf("Cikis yapiyorsunuz emin misiniz? (E/e/H/h)\n");
+        	scanf(" %c",&cikis);
+        	if(cikis == 'E'||cikis == 'e')
+        	{
+            	printf("Program sonlandirildi");
+				return 0;
+        	}
+        	else if(cikis == 'H'||cikis == 'h')
+        	{
+        		continue;
+        	}
+        	else
+        	{
+        		printf("Hatali giris,yeniden girin.\n");
+        	}
+
+    	}
+
+    }
+
+    return 0;
+}
