@@ -1,2 +1,2 @@
 # The-Lottery
-The chance game
+Lotto application prepared with c programming language
